@@ -140,7 +140,7 @@ func (p *parser) emitImportsUse() {
 	p.Printf(`import (
 	qtio%s "io"
 
-	qt%s "github.com/valyala/quicktemplate"
+	qt%s "github.com/hhh0pE/quicktemplate"
 )
 `, mangleSuffix, mangleSuffix)
 	p.Printf(`var (
