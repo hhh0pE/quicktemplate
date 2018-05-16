@@ -5,6 +5,7 @@ import (
 	"io"
 	"strconv"
 	"sync"
+	"reflect"
 )
 
 // Writer implements auxiliary writer used by quicktemplate functions.
@@ -104,16 +105,31 @@ func (w *QWriter) SZ(z []byte) {
 }
 
 // D writes n to w.
-func (w *QWriter) D(n int) {
+func (w *QWriter) D(ni interface{}) {
+	var n int64
+	switch v := ni.(type) {
+	case int:
+		n = int64(v)
+	case int8:
+		n = int64(v)
+	case int16:
+		n = int64(v)
+	case int32:
+		n = int64(v)
+	case int64:
+		n = int64(v)
+	default:
+		fmt.Println("QuickTemplate error: unknown type", v, reflect.TypeOf(v))
+	}
+
 	bb, ok := w.w.(*ByteBuffer)
 	if ok {
-		bb.B = strconv.AppendInt(bb.B, int64(n), 10)
+		bb.B = strconv.AppendInt(bb.B, n, 10)
 	} else {
-		w.b = strconv.AppendInt(w.b[:0], int64(n), 10)
+		w.b = strconv.AppendInt(w.b[:0], n, 10)
 		w.Write(w.b)
 	}
 }
-
 // F writes f to w.
 func (w *QWriter) F(f float64) {
 	w.FPrec(f, -1)
